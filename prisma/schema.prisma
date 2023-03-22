@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  @@map(name: "user")
+  id            Int @id @default(autoincrement())
+  email         String
+  name          String
+  username      String @unique
+  password      String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  reviews       Review[]
+}
+
+model Movie {
+  @@map(name: "movie")
+  id            Int @id @default(autoincrement())
+  name          String
+  rating        Float
+  synopsis      String @db.VarChar(700)
+  director      String
+  producer      String
+  Stars         String @db.VarChar(250)
+  reviews       Review[]
+  genres        String @db.VarChar(200)
+}
+
+
+model Review {
+  @@map(name: "review")
+  id            Int @id @default(autoincrement())
+  content       String @db.VarChar(500)
+  user          User  @relation(fields: [user_name], references: [username])
+  user_name     String
+  movie         Movie @relation(fields: [movie_id], references: [id])
+  movie_id      Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Admin {
+  @@map(name:"admin")
+  id            Int @id @default(autoincrement())
+  password      String
+}
